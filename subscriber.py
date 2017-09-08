@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
 from pymongo import MongoClient
+from datetime import datetime
 import json
 
 def on_connect(self, mosq, obj, rc):
@@ -24,15 +25,15 @@ def store_on_mongo(_msg):
     banco = cliente.iotdata
     leituras = banco.leituras
 
-    #JSON Data
+    #Store as date in Mongodb for sort()
     data = json.loads(_msg.payload)
     data['topic'] = _msg.topic
-
+    str_mqtt_datetime = data[u't'] 
+    datetime_object = datetime.strptime(str_mqtt_datetime, '%d-%m-%Y %H:%M:%S') 
+    data[u't'] = datetime_object
+	
     print 'Store in mongodb: ' + str(data)
     print leituras.insert_one(data).inserted_id
-
-
-
 
 mqttc = mqtt.Client()
 # Assign event callbacks
@@ -48,10 +49,10 @@ mqttc.username_pw_set('ticimed','cimed@2017')
 mqttc.connect("localhost",8883,60)
 
 # Start subscribe, with QoS level 0
-mqttc.subscribe("MG/TI/RP01/#", 2)
+mqttc.subscribe("MG/TI/RP01/temperature", 2)
+mqttc.subscribe("MG/TI/RP01/humidity", 2)
 
 mqttc.loop_forever()
 
-# Publish a message
-#mqttc.publish("hello/world", "my message")
+
 

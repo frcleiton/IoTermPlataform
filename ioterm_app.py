@@ -17,12 +17,16 @@ def read_temp_database():
 	#Busca o valor da ultima leitura por topico/dispositivo
 	temperatures = []
 	humidities = []
+	str_time = ''
 	for ultima_leitura in leituras.find( {'topic':'MG/TI/RP01/temperature'} ).sort('t', pymongo.DESCENDING ).limit(1):
 		temperatures.append(ultima_leitura['value'])
+		str_time = ultima_leitura['t']
+		print str_time
+		print type(str_time)
 	for ultima_leitura in leituras.find( {'topic':'MG/TI/RP01/humidity'} ).sort('t', pymongo.DESCENDING ).limit(1):
 		humidities.append(ultima_leitura['value'])
 	
-	return render_template("sensors.html",temp=temperatures,hum=humidities,equipname='RPXX',equipsite='MGXX',tmin=10,tmax=30)
+	return render_template("sensors.html",temp=temperatures,hum=humidities,str_time=str_time,equipname='RPXX',equipsite='MGXX',tmin=10,tmax=30)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

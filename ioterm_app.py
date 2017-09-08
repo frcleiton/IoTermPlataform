@@ -14,7 +14,7 @@ def read_temp_database():
 	banco = cliente.iotdata
 	leituras = banco.leituras
 	
-	#Preenche o array com os valores das ultimas leituras
+	#Busca o valor da ultima leitura por topico/dispositivo
 	temperatures = []
 	humidities = []
 	for ultima_leitura in leituras.find( {'topic':'MG/TI/RP01/temperature'} ).sort('t', pymongo.DESCENDING ).limit(1):

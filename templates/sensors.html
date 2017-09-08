@@ -1,0 +1,88 @@
+<html lang="pt-br">
+  <meta charset="utf-8">
+  <title>Termohigrometro</title>
+  <meta http-equiv="refresh" content="120">
+  <meta name="description" content="Termohigrometro - RPi">
+  <meta name="author" content="Cleiton Ferreira">
+  <!-- Mobile Specific Metas ––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- FONT ––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <!-- CSS –––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/static/css/normalize.css">
+  <link rel="stylesheet" href="/static/css/skeleton.css">
+  <!-- Favicon ––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/static/images/favicon.png">
+  <!--charts ------>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart','bar']});
+      google.charts.setOnLoadCallback(drawBasic);
+
+      function drawBasic() {
+            	  
+      var data = google.visualization.arrayToDataTable([
+        ['Temp', 'Temperatura',],
+        ['RP01', 25],
+		['RP02', 27.5]
+      ]);
+
+      var options = {
+        
+        chartArea: {width: '50%'},
+        hAxis: {
+          title: 'C°',
+          minValue: 0
+        },
+        vAxis: {
+          title: 'Sensor'
+        }
+      };
+
+      var chart = new google.visualization.BarChart(document.getElementById('chart_temps'));
+
+      chart.draw(data, options);
+      }
+	 </script>
+</head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="one-half column" style="margin-top: 5%">
+		<h3>Sensores1</h3>
+			<table class="u-full-width">
+			  <thead>
+				<tr>
+				  <th>Sensor</th>
+				  <th>Temperatura</th>
+				  <th>Umidade</th>
+				  <th>Data/Hora</th>
+				</tr>
+			  </thead>
+			  <tbody>
+				<tr>
+				  <td>RP01</td>
+				  <td>{{"{0:0.1f}".format(temp[0]) }}</td>
+				  <td>{{"{0:0.1f}".format(hum[0])}}</td>
+				  <td>San Francisco</td>
+				</tr>
+				<tr>
+				  <td>RP02</td>
+				  <td>{{"{0:0.1f}".format(temp[0]) }}</td>
+				  <td>{{"{0:0.1f}".format(hum[0])}}</td>
+				  <td>Hayward</td>
+				</tr>
+			  </tbody>
+			</table>	
+			
+			<p>Refresh a cada 1 minuto</p>
+		</div>
+		<div class="one-half column" style="margin-top: 10%">
+            <div id="chart_temps"></div>			
+		</div> 		
+      </div>
+    </div>
+  <input type="hidden" id="par_temp_min"   name="par_temp_min"  value={{tmin}}/>
+  <input type="hidden" id="par_temp_max"   name="par_temp_max"  value={{tmax}}/>
+</body> 
+</html>

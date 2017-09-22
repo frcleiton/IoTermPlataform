@@ -30,7 +30,6 @@ def store_on_mongo(_msg):
     data['topic'] = _msg.topic
     str_mqtt_datetime = data[u't'] 
     datetime_object = datetime.strptime(str_mqtt_datetime, '%d-%m-%Y %H:%M:%S')
-    #datetime_object = datetime.strptime(str_mqtt_datetime, '%Y-%m-%d %H:%M:%S') 
     data[u't'] = datetime_object
 	
     print 'Store in mongodb: ' + str(data)
@@ -50,8 +49,8 @@ mqttc.username_pw_set('ticleiton','ti@cleiton')
 mqttc.connect("localhost",8883,60)
 
 # Start subscribe, with QoS level 0
-mqttc.subscribe("MG/TI/RP01/temperature", 0)
-mqttc.subscribe("MG/TI/RP01/humidity", 0)
+mqttc.subscribe("MG/TI/+/temperature", 1)
+mqttc.subscribe("MG/TI/+/humidity", 1)
 
 mqttc.loop_forever()
 

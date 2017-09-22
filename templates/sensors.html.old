@@ -1,8 +1,8 @@
 <html lang="pt-br">
   <meta charset="utf-8">
-  <title>IoTerm</title>
+  <title>Termohigrometro</title>
   <meta http-equiv="refresh" content="120">
-  <meta name="description" content="Termohigrometro - IoT">
+  <meta name="description" content="Termohigrometro - RPi">
   <meta name="author" content="Cleiton Ferreira">
   <!-- Mobile Specific Metas ––––––––––––––––––––––––––––––––––––– -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,70 +16,90 @@
   <!--charts ------>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script type="text/javascript">
-      google.charts.load('current', {'packages':['bar']});
-      google.charts.setOnLoadCallback(drawStuff);
+      google.charts.load('current', {'packages':['corechart','bar']});
+      google.charts.setOnLoadCallback(drawBasic);
 
-      function drawStuff() {
-        var data = new google.visualization.arrayToDataTable([
-          ['Sensores', 'Temperatura', 'Umidade'],
-          ['RP01', 22.7, 55],
-          ['RP02', 18.5, 48],
-		  ['RP03', 20.5, 50],
-        ]);
+      function drawBasic() {
+            	  
+      var data = google.visualization.arrayToDataTable([
+        ['Temp', 'Temp'],
+        ['RP01', {{'%0.2f'|format(temp[0])}} ],
+		['RP02', {{'%0.2f'|format(temp[0])}} ],
+      ]);
 
-        var options = {
-          width: 800,
-          chart: {
-            title: 'IoTerm',
-            subtitle: 'Temperatura e umidade em tempo real'
-          },
-          bars: 'horizontal', // Required for Material Bar Charts.
-          series: {
-            0: { axis: 'temperatura' }, // Bind series 0 to an axis named 'distance'.
-            1: { axis: 'umidade' } // Bind series 1 to an axis named 'brightness'.
-          },
-          axes: {
-            x: {
-              umidade: {label: '%ur'}, // Bottom x-axis.
-              temperatura: {side: 'top', label: '°C'} // Top x-axis.
-            }
-          }
-        };
+      var options = {
+        
+        chartArea: {width: '60%', height: '30%'},
+        hAxis: {
+          title: 'Temperature C°',
+          minValue: 0
+        },
+        legend:{position:'none'}
+      };
 
-      var chart = new google.charts.Bar(document.getElementById('chart_temps'));
+      var chart = new google.visualization.BarChart(document.getElementById('chart_temps'));
+
+      chart.draw(data, options);
+      }
+  </script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart','bar']});
+      google.charts.setOnLoadCallback(drawBasic);
+
+      function drawBasic() {
+            	  
+      var data = google.visualization.arrayToDataTable([
+        ['Umid', 'Umid'],
+        ['RP01', {{'%0.2f'|format(hum[0])}} ],
+		['RP02', {{'%0.2f'|format(hum[0])}} ],
+      ]);
+
+      var options = {
+        
+        chartArea: {width: '60%', height: '30%'},
+        hAxis: {
+          title: 'Humidity %',
+          minValue: 0,
+        },
+        legend:{position:'none'}
+      };
+
+      var chart = new google.visualization.BarChart(document.getElementById('chart_humids'));
+
       chart.draw(data, options);
       }
   </script>
   </head>
   <body>
     <div class="container">
-      <div class="row" style="margin-top: 5%">
-		<div id="chart_temps" style="width: 100%; height: 50%;"></div>
-	  </div>
-	  <div class="row" style="margin-top: 5%">
-        
+      <div class="row">
+        <div class="one-half column" style="margin-top: 5%">
+		<h3>Sensores</h3>
 			<table class="u-full-width">
 			  <thead>
 				<tr>
 				  <th>Sensor</th>
-				  <th>Umidade</th>
 				  <th>Temperatura</th>
+				  <th>Umidade</th>
 				  <th>Data/Hora</th>
 				</tr>
 			  </thead>
 			  <tbody>
 				<tr id='RP01'>
 				  <td>RP01</td>
-				  <td>{{"{0:0.1f}".format(hum[0])}}</td>
 				  <td>{{"{0:0.1f}".format(temp[0])}}</td>
+				  <td>{{"{0:0.1f}".format(hum[0])}}</td>
 				  <td>{{str_time}}</td>
 				</tr>
 			  </tbody>
 			</table>	
 			
 			<p>Refresh a cada 1 minuto</p>
-		
-		
+		</div>
+		<div class="one-half column" style="margin-top: 10%">
+            <div id="chart_temps"></div>			
+		    <div id="chart_humids"></div>			
+		</div> 		
       </div>
     </div>
   <input type="hidden" id="par_temp_min" name="par_temp_min"  value={{tmin}}/>

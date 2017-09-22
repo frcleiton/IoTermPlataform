@@ -18,13 +18,13 @@ def read_temp_database():
 	temperatures = []
 	humidities = []
 	str_time = ''
-	for ultima_leitura in leituras.find( {'topic':'MG/TI/RP01/temperature'} ).sort('t', pymongo.DESCENDING ).limit(1):
+	for ultima_leitura in leituras.find( {'topic':'RP01/temperature'} ).sort('t', pymongo.DESCENDING ).limit(1):
 		temperatures.append(ultima_leitura['value'])
 		#print ultima_leitura['t']
 		#strdatetime = datetime.now().strftime("%d-%m-%Y %H:%M")
 		strdatetime = ultima_leitura['t'].strftime("%d-%m-%Y %H:%M")
-	for ultima_leitura in leituras.find( {'topic':'MG/TI/RP01/humidity'} ).sort('t', pymongo.DESCENDING ).limit(1):
-		humidities.append(ultima_leitura['value'])
+	for ultima_leitura in leituras.find( {'topic':'RP01/humidity'} ).sort('t', pymongo.DESCENDING ).limit(1):
+		humidities.append(ultima_leitura['value']))
 	
 	return render_template("sensors.html",temp=temperatures,hum=humidities,str_time=strdatetime,tmin=29,tmax=30)
 

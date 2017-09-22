@@ -22,10 +22,8 @@
       function drawStuff() {
         var data = new google.visualization.arrayToDataTable([
           ['Sensores', 'Temperatura', 'Umidade'],
-          ['RP01', 22.7, 55],
-          ['RP02', 18.5, 48],
-		  ['RP03', 20.5, 50],
-        ]);
+          ['RP01', {{temp[0]}}, {{hum[0]}}],
+         ]);
 
         var options = {
           width: 800,

@@ -49,8 +49,8 @@ mqttc.username_pw_set('ticleiton','ti@cleiton')
 mqttc.connect("localhost",8883,60)
 
 # Start subscribe, with QoS level 0
-mqttc.subscribe("MG/TI/+/temperature", 1)
-mqttc.subscribe("MG/TI/+/humidity", 1)
+mqttc.subscribe("+/temperature", 1)
+mqttc.subscribe("+/humidity", 1)
 
 mqttc.loop_forever()
 

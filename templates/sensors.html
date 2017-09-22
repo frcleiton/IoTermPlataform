@@ -23,19 +23,17 @@
             	  
       var data = google.visualization.arrayToDataTable([
         ['Temp', 'Temp'],
-        ['RP01', 25 ],
+        ['RP01', {{'%0.2f'|format(temp[0])}} ],
       ]);
 
       var options = {
         
         chartArea: {width: '60%', height: '30%'},
         hAxis: {
-          title: 'C°',
+          title: 'Temperature C°',
           minValue: 0
         },
-        vAxis: {
-          title: 'Sensor'
-        }
+        legend:{position:'none'}
       };
 
       var chart = new google.visualization.BarChart(document.getElementById('chart_temps'));
@@ -51,19 +49,17 @@
             	  
       var data = google.visualization.arrayToDataTable([
         ['Umid', 'Umid'],
-        ['RP01', 40 ],
+        ['RP01', {{'%0.2f'|format(hum[0])}} ],
       ]);
 
       var options = {
         
         chartArea: {width: '60%', height: '30%'},
         hAxis: {
-          title: '%',
+          title: 'Humidity %',
           minValue: 0,
         },
-        vAxis: {
-          title: 'Sensor'
-        }
+        legend:{position:'none'}
       };
 
       var chart = new google.visualization.BarChart(document.getElementById('chart_humids'));
@@ -89,7 +85,7 @@
 			  <tbody>
 				<tr id='RP01'>
 				  <td>RP01</td>
-				  <td>{{"{0:0.1f}".format(temp[0]) }}</td>
+				  <td>{{"{0:0.1f}".format(temp[0])}}</td>
 				  <td>{{"{0:0.1f}".format(hum[0])}}</td>
 				  <td>{{str_time}}</td>
 				</tr>

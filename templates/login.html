@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <!-- Basic Page Needs ....................... -->
+    <meta charset="utf-8">
+    <title>Historico</title>
+    <meta name="description" content="Historico Termohigrometro">
+    <meta name="author" content="Cleiton Ferreira">
+    <!-- Mobile Specific Metas  ................. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- FONT ................................... -->
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <!-- CSS .................................... -->
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    <link rel="stylesheet" href="/static/css/skeleton.css">
+  </head>
+{% block body %}
+  <div class="container" style="top: 200px; left: 100px">
+    {% if session['logged_in'] %}
+    <p>You're logged in already!</p>
+    {% else %}
+    <form action="/login" method="POST">
+    <label for="msg1">ioterm</label>
+    <div class="row">
+      <input class="one-column" type="text" name="empresa" placeholder="Empresa">
+    </div>
+    <div class="row">
+      <input class="one-column" type="text" name="username" placeholder="Username">
+    </div>
+    <div class="row">
+      <input type="password" name="password" placeholder="Password">
+    </div>
+    <div class="row">
+      <p>{{msg}}</p>
+    </div>
+    <div class="row">
+      <input class="button-primary" type="submit" value="Log in">
+    </div>
+    </form>
+    {% endif %}
+  </div>
+{% endblock %}
+</html>

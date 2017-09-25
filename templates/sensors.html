@@ -23,6 +23,7 @@
         var data = new google.visualization.arrayToDataTable([
           ['Sensores', 'Temperatura', 'Umidade'],
           ['RP01', {{temp[0]}}, {{hum[0]}}],
+          ['RP02', {{temp[1]}}, {{hum[1]}}],
          ]);
 
         var options = {
@@ -60,24 +61,32 @@
 			  <thead>
 				<tr>
 				  <th>Sensor</th>
-				  <th>Umidade</th>
 				  <th>Temperatura</th>
+          <th>Umidade</th>
 				  <th>Data/Hora</th>
+          <th>Conf</th>
 				</tr>
 			  </thead>
 			  <tbody>
 				<tr id='RP01'>
-				  <td>RP01</td>
-				  <td>{{"{0:0.1f}".format(hum[0])}}</td>
+				  <td><a href="/hist/rp01">RP01</a></td>
 				  <td>{{"{0:0.1f}".format(temp[0])}}</td>
-				  <td>{{str_time}}</td>
+				  <td>{{"{0:0.1f}".format(hum[0])}}</td>
+				  <td>{{str_time[0]}}</td>
+ 				  <td><a href="/conf/rp01"><img src=static/images/settings.png width="20px" height="20px"></a></td>
+				</tr>
+				<tr id='RP02'>
+				  <td><a href="/hist/rp02">RP02</a></td>
+				  <td>{{"{0:0.1f}".format(temp[1])}}</td>
+				  <td>{{"{0:0.1f}".format(hum[1])}}</td>
+				  <td>{{str_time[1]}}</td>
+          <td><a href="/conf/rp02"><img src=static/images/settings.png width="20px" height="20px"></a></td>
 				</tr>
 			  </tbody>
 			</table>	
 			
-			<p>Refresh a cada 1 minuto</p>
-		
-		
+			<p>Refresh a cada 1 minuto  -  Logado como: {{user}}  -  <a href="/logout">Logout</a></p>
+				
       </div>
     </div>
   <input type="hidden" id="par_temp_min" name="par_temp_min"  value={{tmin}}/>

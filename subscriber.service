@@ -1,0 +1,13 @@
+[Unit]
+Description=MQTT Subscriber
+After=network.target
+
+[Service]
+User=root
+Restart=always
+WorkingDirectory=/home/cleiton/iotermplataform
+#Type=forking
+ExecStart=/usr/bin/python subscriber.py
+
+[Install]
+WantedBy=multi-user.target

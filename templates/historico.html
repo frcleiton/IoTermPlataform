@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <!-- Basic Page Needs ––––––––––––––––––––––– -->
+    <meta charset="utf-8">
+    <title>Historico</title>
+    <meta name="description" content="Historico Termohigrometro">
+    <meta name="author" content="Cleiton Ferreira">
+    <!-- Mobile Specific Metas  ––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- FONT ––––––––––––––––––––––––––––––––––– -->
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <!-- CSS –––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    <link rel="stylesheet" href="/static/css/skeleton.css">
+    <!-- Favicon ––––––––––––––––––––––––––––––––– -->
+    <!--<link rel="icon" type="image/png" href="/static/images/favcimed.png">-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+	      <form id="datetime_range" action="/historico" method="GET"> 
+	        <!-- <div class="row">          -->
+	          <div class="three columns">
+	            <label for="from">Data de</label>
+	            <input class="u-full-width" id="datetimepicker1" type="text" value="{{from_date}}" name="from">
+	          </div>
+	        <!-- </div> -->
+	        <!-- <div class="row"> -->
+	          <div class="three columns">
+	            <label for="to">Date até</label>           
+	            <input class="u-full-width" id="datetimepicker2" type="text" value="{{to_date}}" name="to">
+	          </div>   
+	        <!-- </div>          -->
+	        <!-- <div class="row"> -->
+	          <div class="two columns">    
+	            <input class="button-primary" type="submit" value="Enviar" style="position:relative; top: 28px" id="submit_button" />
+	          </div>
+	        <!-- </div> -->
+	      </form> 
+      </div>
+      <div class="row">
+        <div class="one-third column" style="margin-top: 5%">
+          <strong>Mostrar todos os registros</strong>
+          <h2>{{sensorname}} - Temperatura</h2>
+            <table class="u-full-width">
+              <thead style="display:block;">
+                <tr>
+                  <th>Data</th>
+                  <th>              &deg;C</th>
+                </tr>
+              </thead>
+              <tbody style="height:450px; overflow:scroll; display:block;">
+                {% for row in temp %}
+                <tr>
+                  <td>{{row[0]}}</td>
+                  <td>{{'%0.2f'|format(row[1])}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
+ 
+        <div class="two-thirds column" style="margin-top: 5%">
+        <div class="row">                  
+          <div class="row">
+            <div class="three columns">
+                <div id="chart_temps"></div>
+            </div>
+          </div>
+        </div>     
+      </div>
+    </div>
+  </body>
+  <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/static/css/jquery.datetimepicker.css"/ >
+  <script src="/static/javascript/jquery.datetimepicker.full.js"></script>
+   
+  <script>
+    jQuery('#datetimepicker1').datetimepicker(
+      {
+	      format: 'Y-m-d H:i',
+        defaultDate:'{{from_date}}'
+      });
+    jQuery('#datetimepicker2').datetimepicker({
+        format: 'Y-m-d H:i',
+        defaultDate:'{{to_date}}'
+      });
+
+  </script>
+ 
+  <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['corechart']}]}"></script>
+ 
+    <script>
+    google.load('visualization', '1', {packages: ['corechart']});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+      var data = new google.visualization.DataTable();
+      data.addColumn('datetime', 'Time');  
+      data.addColumn('number', 'Temperature');      
+      data.addRows([
+          {% for row in temp %}
+            [new Date({{row[0].year}},{{row[0].month}},{{row[0].day}},{{row[0].hour}},{{row[0].minute}}),{{'%0.2f'|format(row[1])}}],
+          {% endfor %}
+          ]);
+
+      var options = {
+        width: 600,
+        height: 563,
+        hAxis: {
+          title: "Data",
+          gridlines: { count: {{temp_items}}, color: '#CCC' },
+          format: 'dd-MMM-yyyy HH:mm' },
+        vAxis: {
+          title: 'Graus'
+        },
+        title: 'Temperatura',
+        curveType: 'function'  //Makes line curved
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('chart_temps'));
+
+      chart.draw(data, options);
+
+    }
+
+      </script>
+</html>

@@ -1,0 +1,9 @@
+server { 
+	listen 80;
+	server_name 192.168.50.106;
+
+	location / {
+		include uwsgi_params;
+		uwsgi_pass unix:/home/cleiton/iotermplataform/iotermplataform.sock;
+	}
+}

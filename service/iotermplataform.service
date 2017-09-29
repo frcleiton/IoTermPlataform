@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve iotermplataform 
+After=network.target
+
+[Service]
+User=cleiton
+Group=www-data
+WorkingDirectory=/home/cleiton/iotermplataform
+Environment="PATH=/home/cleiton/iotermplataform"
+ExecStart=/usr/local/bin/uwsgi --ini /home/cleiton/iotermplataform/iotermplataform.ini
+
+[Install]
+WantedBy=multi-user.target

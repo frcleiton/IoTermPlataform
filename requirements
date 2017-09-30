@@ -1,0 +1,29 @@
+sudo apt-get install nginx
+sites-available/enabled
+
+sudo apt-get install mosquitto
+sudo cp *.conf /etc/mosquitto/conf.d/
+sudo mosquitto_passwd -c /etc/mosquitto/passwd ticleiton
+
+sudo apt-get install python-pip
+sudo pip install flask
+python -m pip install pymongo
+sudo python -m pip install flask_login
+
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.li
+st.d/mongodb-org-3.4.list
+
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+
+ln -s iotermplataform.service /etc/systemd/system/ioterm.service
+systemctl daemon-reload
+systemctl enable iotermplataform.service
+
+sudo pip install paho-mqtt
+sudo cp subscriber.service /etc/systemd/system
+sudo systemctl enable subscriber.service
+sudo systemctl start subscriber.service
+sudo systemctl daemon-reload
+sudo service subscriber status

@@ -14,11 +14,7 @@
     <link rel="stylesheet" href="/static/css/normalize.css">
     <link rel="stylesheet" href="/static/css/skeleton.css">
   </head>
-{% block body %}
-  <div class="container" style="top: 200px; left: 100px">
-    {% if session['logged_in'] %}
-    <p>You're logged in already!</p>
-    {% else %}
+  <div class="container" style="padding: 120px; text-align: center">
     <form action="/login" method="POST">
     <label for="msg1">ioterm</label>
     <div class="row">
@@ -37,7 +33,5 @@
       <input class="button-primary" type="submit" value="Login">
     </div>
     </form>
-    {% endif %}
   </div>
-{% endblock %}
 </html>

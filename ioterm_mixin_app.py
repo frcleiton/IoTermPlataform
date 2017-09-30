@@ -19,6 +19,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+USERS = []
+
 # silly user model
 #class User(UserMixin):
 # 	def __init__(self, id):
@@ -181,7 +183,6 @@ def load_user(userid):
 	return User.get(userid)
 
 if __name__ == "__main__":
-	global USERS
 	USERS = (("user1", "pass1"),
 		  ("cleiton", "teste")
 		  )

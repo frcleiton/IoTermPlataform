@@ -181,7 +181,7 @@ def load_user(userid):
 	return User.get(userid)
 
 if __name__ == "__main__":
-	USERS = (("user1", "pass1"),
+	global USERS = (("user1", "pass1"),
 		  ("cleiton", "teste")
 		  )
 

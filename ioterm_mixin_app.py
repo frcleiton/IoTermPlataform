@@ -19,7 +19,9 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-USERS = []
+USERS = (("user1", "pass1"),
+		  ("cleiton", "teste")
+		  )
 
 # silly user model
 #class User(UserMixin):
@@ -183,8 +185,5 @@ def load_user(userid):
 	return User.get(userid)
 
 if __name__ == "__main__":
-	USERS = (("user1", "pass1"),
-		  ("cleiton", "teste")
-		  )
-
+	
 	app.run(host='0.0.0.0')

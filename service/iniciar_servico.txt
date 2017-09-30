@@ -1,0 +1,4 @@
+systemctl daemon-reload
+systemctl enable my_systemd_script.service
+systemctl start my_systemd_script.service
+

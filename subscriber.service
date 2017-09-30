@@ -3,10 +3,11 @@ Description=MQTT Subscriber
 After=network.target
 
 [Service]
-User=root
+User=cleiton
 Restart=always
 WorkingDirectory=/home/cleiton/iotermplataform
 #Type=forking
+Environment="PATH=/home/cleiton/iotermplataform
 ExecStart=/usr/bin/python subscriber.py
 
 [Install]

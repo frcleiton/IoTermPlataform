@@ -1,0 +1,6 @@
+sudo apt-get install mosquitto
+sudo cp *.conf /etc/mosquitto/conf.d/
+sudo mosquitto_passwd -c /etc/mosquitto/passwd ticleiton
+nginx
+sudo apt-get install python-pip
+sudo pip install flask

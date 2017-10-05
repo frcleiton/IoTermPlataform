@@ -17,7 +17,15 @@
     <!--<link rel="icon" type="image/png" href="/static/images/favcimed.png">-->
   </head>
   <body>
-    <div class="container">
+    <div class="container" style="margin-top: 2%">
+      <div class="row">
+          <div class="one-half column">
+            <h2>{{sensorname}} - Temperatura</h2>
+          </div>
+          <div class="one-half column" style="text-align: right">
+            <span><a href="/">tempo real</a></span>
+          </div>
+      </div>
       <div class="row">
 	      <form id="datetime_range" action="/historico" method="GET"> 
 	        <!-- <div class="row">          -->
@@ -40,21 +48,21 @@
 	      </form> 
       </div>
       <div class="row">
-        <div class="one-third column" style="margin-top: 5%">
+        <div class="one-third column" style="margin-top: 2%">
           <strong>Mostrar todos os registros</strong>
-          <h2>{{sensorname}} - Temperatura</h2>
-            <table class="u-full-width">
-              <thead style="display:block;">
+  
+            <table class="u-full-width" style="height:450px; overflow:scroll; display:block;">
+              <thead>
                 <tr>
                   <th>Data</th>
-                  <th>              &deg;C</th>
+                  <th>&deg;C</th>
                 </tr>
               </thead>
-              <tbody style="height:450px; overflow:scroll; display:block;">
+              <tbody >
                 {% for row in temp %}
                 <tr>
-                  <td>{{row[0]}}</td>
-                  <td>{{'%0.2f'|format(row[1])}}</td>
+                  <td>{{row[1]}}</td>
+                  <td>{{'%0.2f'|format(row[2])}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -71,6 +79,12 @@
         </div>     
       </div>
     </div>
+    {% for row in temp %}
+    
+    [new Date({{row[0]}}),{{'%0.2f'|format(row[2])}}],
+            
+    {% endfor %}
+    ]);
   </body>
   <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
   <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
@@ -87,45 +101,40 @@
         format: 'Y-m-d H:i',
         defaultDate:'{{to_date}}'
       });
-
   </script>
- 
-  <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['corechart']}]}"></script>
- 
-    <script>
-    google.load('visualization', '1', {packages: ['corechart']});
-    google.setOnLoadCallback(drawChart);
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
 
-    function drawChart() {
+      google.charts.load('current', {'packages':['line']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
 
       var data = new google.visualization.DataTable();
-      data.addColumn('datetime', 'Time');  
-      data.addColumn('number', 'Temperature');      
+      data.addColumn('datetime', 'Day');
+      data.addColumn('number', '{{sensorname}}');
+      
       data.addRows([
-          {% for row in temp %}
-            [new Date({{row[0].year}},{{row[0].month}},{{row[0].day}},{{row[0].hour}},{{row[0].minute}}),{{'%0.2f'|format(row[1])}}],
-          {% endfor %}
-          ]);
+      {% for row in temp %}
+
+        [new Date({{row[0]}}),{{'%0.2f'|format(row[2])}}],
+        
+      {% endfor %}
+      ]);
 
       var options = {
-        width: 600,
-        height: 563,
-        hAxis: {
-          title: "Data",
-          gridlines: { count: {{temp_items}}, color: '#CCC' },
-          format: 'dd-MMM-yyyy HH:mm' },
-        vAxis: {
-          title: 'Graus'
+        chart: {
+          title: '{{sensorname}} - Historico de temperaturas',
+          subtitle: 'em C°'
         },
-        title: 'Temperatura',
-        curveType: 'function'  //Makes line curved
+        width: 800,
+        height: 450
       };
 
-      var chart = new google.visualization.LineChart(document.getElementById('chart_temps'));
+      var chart = new google.charts.Line(document.getElementById('chart_temps'));
 
-      chart.draw(data, options);
-
-    }
-
-      </script>
+      chart.draw(data, google.charts.Line.convertOptions(options));
+      }
+    
+  </script>
 </html>

@@ -1,5 +1,5 @@
 from flask import Flask, request, Response, render_template, abort, redirect, url_for
-#import time
+import time
 from datetime import date, datetime, timedelta
 from email.Utils import formatdate
 from pymongo import MongoClient
@@ -19,7 +19,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-USERS = (("user1", "pass1"),
+USERS = (("cleiton", "teste"),
 		  ("cleiton", "teste")
 		  )
 
@@ -103,14 +103,17 @@ def historico(sensor):
 	topico = sensor.upper() + '/temperature'
 	registros = []
 	for registro in leituras.find( {'topic':topico, 't': {'$gte':yesterday}} ).sort('t', pymongo.DESCENDING ):
-		registros.append([registro['t'],registro['value']])
+		d = datetime.utcnow()
+		d = registro['t']
+		js_formato = int(time.mktime(d.timetuple())) * 1000
+		registros.append([js_formato,registro['t'],registro['value']])
 
 	print registros
 
 	#if cont == 0:
 	#	return '<H2>DADOS NAO ENCONTRADOS</H2>'
 
-	from_date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+	from_date_str = yesterday.strftime("%Y-%m-%d %H:%M")
 	to_date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 
@@ -121,7 +124,7 @@ def historico(sensor):
 							to_date 		= to_date_str,
 							query_string	= 'select ', #This query string is used
 							#by the Plotly link
-							sensorname	  = sensor.upper())
+							sensorname	  	= sensor.upper())
 
 
 @app.route("/conf/<sensor>")

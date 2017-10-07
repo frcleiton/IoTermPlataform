@@ -102,16 +102,17 @@ def historico(sensor):
 
 	topico = sensor.upper() + '/temperature'
 	registros = []
+	i = 0
 	for registro in leituras.find( {'topic':topico, 't': {'$gte':yesterday}} ).sort('t', pymongo.DESCENDING ):
 		d = datetime.utcnow()
 		d = registro['t']
 		js_formato = int(time.mktime(d.timetuple())) * 1000
-		registros.append([js_formato,registro['t'],registro['value']])
+		if (i % 5) == 0:
+			registros.append([js_formato,registro['t'],registro['value']])
+		i += 1
 
-	print registros
-
-	#if cont == 0:
-	#	return '<H2>DADOS NAO ENCONTRADOS</H2>'
+ 	if i == 0:
+		abort(404)
 
 	from_date_str = yesterday.strftime("%Y-%m-%d %H:%M")
 	to_date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -170,8 +171,13 @@ def logout():
 
 # handle login failed
 @app.errorhandler(401)
-def page_not_found(e):
+def login_failed(e):
 	return Response('<p>Login failed</p>')
+
+# handle data not found
+@app.errorhandler(404)
+def page_not_found(e):
+	return render_template('404.html'), 404
 
 
 # callback to reload the user object
@@ -188,5 +194,5 @@ def load_user(userid):
 	return User.get(userid)
 
 if __name__ == "__main__":
-	
+
 	app.run(host='0.0.0.0')

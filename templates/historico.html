@@ -27,7 +27,7 @@
           </div>
       </div>
       <div class="row">
-	      <form id="datetime_range" action="/historico" method="GET"> 
+	      <form id="datetime_range" action="/hist/{{sensorname}}" method="GET"> 
 	        <!-- <div class="row">          -->
 	          <div class="three columns">
 	            <label for="from">Data de</label>
@@ -126,7 +126,9 @@
 
       var chart = new google.charts.Line(document.getElementById('chart_temps'));
 
-      chart.draw(data, google.charts.Line.convertOptions(options));
+      {% if cont %}
+        chart.draw(data, google.charts.Line.convertOptions(options));
+      {% endif %}
       }
     
   </script>

@@ -88,7 +88,7 @@ def index():
 
 	return render_template("sensors.html",temp=temperatures,hum=humidities,str_time=strdatetime,tmin=29,tmax=30)
 
-@app.route("/hist/<sensor>")
+@app.route("/hist/<sensor>", methods=['GET'])
 @login_required
 def historico(sensor):
 	msg = 'Sensor: ' +sensor
@@ -99,24 +99,31 @@ def historico(sensor):
 	leituras = banco.leituras
 
 	yesterday = datetime.now() - timedelta(days=1)
+	today = datetime.now()
+
+	if request.args.has_key('from'):
+	   from_date_str = request.args.get('from',time.strftime("%Y-%m-%d 00:00")) #Get the from date value from the URL
+	   to_date_str 	= request.args.get('to',time.strftime("%Y-%m-%d %H:%M"))   #Get the to date value from the URL
+	   yesterday = datetime.strptime(from_date_str, '%Y-%m-%d %H:%M')
+	else:
+	   from_date_str = yesterday.strftime("%Y-%m-%d %H:%M")
+	   to_date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+	print yesterday
+	print type(yesterday)
 
 	topico = sensor.upper() + '/temperature'
 	registros = []
 	i = 0
-	for registro in leituras.find( {'topic':topico, 't': {'$gte':yesterday}} ).sort('t', pymongo.DESCENDING ):
+	for registro in leituras.find( {'topic':topico, 't': {'$gte':yesterday}, 't': {'$lt':today}} ).sort('t', pymongo.DESCENDING ):
 		d = datetime.utcnow()
 		d = registro['t']
 		js_formato = int(time.mktime(d.timetuple())) * 1000
-		if (i % 5) == 0:
+		if ((i < 5) or (i % 5 == 0)):
 			registros.append([js_formato,registro['t'],registro['value']])
-		i += 1
+			i += 1
 
- 	if i == 0:
-		abort(404)
-
-	from_date_str = yesterday.strftime("%Y-%m-%d %H:%M")
-	to_date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
-
+	print registros
 
 	return render_template("historico.html",
 							temp 			= registros,
@@ -125,7 +132,8 @@ def historico(sensor):
 							to_date 		= to_date_str,
 							query_string	= 'select ', #This query string is used
 							#by the Plotly link
-							sensorname	  	= sensor.upper())
+							sensorname	  	= sensor.upper(),
+							cont = i)
 
 
 @app.route("/conf/<sensor>")

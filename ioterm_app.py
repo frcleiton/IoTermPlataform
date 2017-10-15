@@ -63,7 +63,12 @@ def hash_pass(password):
 	salted_password = password + app.secret_key
 	return md5.new(salted_password).hexdigest()
 
-@app.route("/")
+@app.route("/")	
+@app.route("/home")
+def home():
+	return render_template("home.html")
+
+@app.route("/dashboard")
 def index():
 	#Conectando ao banco MongoDB
 	cliente = MongoClient('localhost', 27017)

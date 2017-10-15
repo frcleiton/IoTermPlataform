@@ -53,6 +53,7 @@
   <body>
     <div class="container">
 		<div class="u-pull-right" style="margin-top: 0%; text-align: right">
+		<a href="/home">Home</a><br>
 		{% if current_user.is_authenticated %}
 			Ola, {{current_user.id}} - <a href="/logout">Logout</a><br>
 		{% else %}

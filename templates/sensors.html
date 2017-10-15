@@ -52,19 +52,30 @@
   </head>
   <body>
     <div class="container">
+		<div class="u-pull-right" style="margin-top: 0%; text-align: right">
+		{% if current_user.is_authenticated %}
+			Ola, {{current_user.id}} - <a href="/logout">Logout</a><br>
+		{% else %}
+			<a href="/login">Login</a><br>
+		{% endif %}
+		{% if nalert %}
+			<img src="/static/images/icon-push-notifications.png" Style="height: 30px; width: 30px" alt="Alertas Ativos"><a href="/alarmes">Alarme({{nalert}})</a>
+		{% endif %}
+		</div>
+		
       <div class="row" style="margin-top: 5%">
 		<div id="chart_temps" style="width: 100%; height: 50%;"></div>
 	  </div>
-	  <div class="row" style="margin-top: 5%">
+	  <div class="row" style="margin-top: 10%">
         
 			<table class="u-full-width">
 			  <thead>
 				<tr>
 				  <th>Sensor</th>
 				  <th>Temperatura</th>
-          <th>Umidade</th>
+				  <th>Umidade</th>
 				  <th>Data/Hora</th>
-          <th><span>Settings</span></th>
+				  <th><span>Settings</span></th>
 				</tr>
 			  </thead>
 			  <tbody>
@@ -73,20 +84,19 @@
 				  <td>{{"{0:0.1f}".format(temp[0])}}</td>
 				  <td>{{"{0:0.1f}".format(hum[0])}}</td>
 				  <td>{{str_time[0]}}</td>
- 				  <td><a href="/conf/rp01"><img src=static/images/settings.png width="20px" height="20px"></a></td>
+ 				  <td><a href="/roconf/rp01"><img src=static/images/settings.png width="20px" height="20px"></a></td>
 				</tr>
 				<tr id='RP02'>
 				  <td><a href="/hist/rp02">RP02</a></td>
 				  <td>{{"{0:0.1f}".format(temp[1])}}</td>
 				  <td>{{"{0:0.1f}".format(hum[1])}}</td>
 				  <td>{{str_time[1]}}</td>
-          <td><a href="/conf/rp02"><img src=static/images/settings.png width="20px" height="20px"></a></td>
+				  <td><a href="/roconf/rp02"><img src=static/images/settings.png width="20px" height="20px"></a></td>
 				</tr>
 			  </tbody>
 			</table>	
 			
-			<p>Refresh a cada 1 minuto  -  <a href="/logout">Logout</a></p>
-				
+			<p>Refresh a cada 1 minuto</p>  
       </div>
     </div>
   <input type="hidden" id="par_temp_min" name="par_temp_min"  value={{tmin}}/>

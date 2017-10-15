@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <!-- Basic Page Needs ––––––––––––––––––––––– -->
+    <meta charset="utf-8">
+    <title>Alarmes</title>
+    <meta name="description" content="Historico Termohigrometro">
+    <meta name="author" content="Cleiton Ferreira">
+    <!-- Mobile Specific Metas  ––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- FONT ––––––––––––––––––––––––––––––––––– -->
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <!-- CSS –––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    <link rel="stylesheet" href="/static/css/skeleton.css">
+  </head>
+  <body>
+    <div class="container" style="top: 40px">
+      <h2>Alarmes</h2>
+	  <table class="u-full-width">
+	  <thead>
+		<tr>
+		  <th>Descrição</th>
+		  <th>sensor</th>
+		  <th>data/hora</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		{% for item in alarmes %}
+		<tr>
+		  <td>{{item['descricao']}}</td>
+		  <td>{{item['sensor']}}</td>
+		  <td>{{item['data'].strftime("%d-%m-%Y %H:%M:%S")}}</td>
+		</tr>
+        {% endfor %}
+	  </tbody>
+	</table>
+    </div>
+  </body>
+</html>

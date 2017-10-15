@@ -13,48 +13,39 @@
     <!-- CSS –––––––––––––––––––––––––––––––––––– -->
     <link rel="stylesheet" href="/static/css/normalize.css">
     <link rel="stylesheet" href="/static/css/skeleton.css">
-	{% with messages = get_flashed_messages(category_filter=["sucess"]) %}
-	{% if messages %}
-	{% for message in messages %}
-	<script>
-	alert('{{message}}');
-	</script>
-	{% endfor %}
-	{% endif %}
-	{% endwith %}
   </head>
   <body>
     <div class="container" style="top: 40px">
       <h2>Parâmetros de configuração - {{sensorname}}</h2>
-      <form id="parametros" action="/conf/{{sensorname}}" method="POST"> 
+      <form id="parametros" action="/conf/{{sensorname}}" method="GET"> 
         <div class="row">
           <div class="four columns">
             <label for="Temperatura mínima">Temperatura minima</label>
-            <input class="u-full-width" id="temp_min" type="number" step="1" name="temp_min" value="{{parametros['tempmin']}}" >
+            <input class="u-full-width" id="temp_min" type="number" name="temp_min" value="{{parametros['tempmin']}}" readonly>
           </div>
           <div class="four columns">
             <label for="Temperatura máxima">Temperatura máxima</label>
-            <input class="u-full-width" id="temp_max" type="number" step="1" name="temp_max" value="{{parametros['tempmax']}}">
+            <input class="u-full-width" id="temp_max" type="number" name="temp_max" value="{{parametros['tempmax']}}" readonly>
           </div>
         </div>
         <div class="row">
           <div class="four columns">
             <label for="Temperatura mínima">Umidade minima</label>
-            <input class="u-full-width" id="umid_min" type="number" step="1" name="umid_min" value="{{parametros['hummin']}}">
+            <input class="u-full-width" id="umid_min" type="number" name="umid_min" value="{{parametros['hummin']}}" readonly>
           </div>
           <div class="four columns">
             <label for="Temperatura máxima">Umidade máxima</label>
-            <input class="u-full-width" id="umid_max" type="number" step="1" name="umid_max" value="{{parametros['hummax']}}">
+            <input class="u-full-width" id="umid_max" type="number" name="umid_max" value="{{parametros['hummax']}}" readonly>
           </div>
         </div>
         <div class="row">
             <div class="eight columns">
                 <label for="emailAlerta">Email Alerta</label>
-                <input class="u-full-width" type="email" placeholder="email-alerta@mailbox.com" id="emailAlerta" name="emailAlerta" value="{{parametros['email']}}">
+                <input class="u-full-width" type="email" name="emailAlerta" value="{{parametros['email']}}" readonly>
             </div>
         </div>
         <div class="row">
-          <input class="button-primary" type="submit" value="Enviar" id="submit" style="margin-top:15px"/>
+          <input class="button-primary" type="submit" value="Alterar" id="submit" style="margin-top:15px"/>
         </div>
         <div class="row">
           <a href="/" style="top:15px">voltar</a>

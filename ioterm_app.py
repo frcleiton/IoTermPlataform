@@ -1,10 +1,11 @@
-from flask import Flask, request, Response, render_template, abort, redirect, url_for
+from flask import Flask, request, Response, render_template, abort, redirect, url_for, flash, session
 import time
 from datetime import date, datetime, timedelta
 from email.Utils import formatdate
 from pymongo import MongoClient
 import pymongo
-from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 
@@ -63,7 +64,6 @@ def hash_pass(password):
 	return md5.new(salted_password).hexdigest()
 
 @app.route("/")
-@login_required
 def index():
 	#Conectando ao banco MongoDB
 	cliente = MongoClient('localhost', 27017)
@@ -74,7 +74,7 @@ def index():
 	temperatures = []
 	humidities = []
 	strdatetime = []
-	str_time = ''
+	str_time = []
 	for ultima_leitura in leituras.find( {'topic':'RP01/temperature'} ).sort('t', pymongo.DESCENDING ).limit(1):
 	   temperatures.append(ultima_leitura['value'])
 	   strdatetime.append(ultima_leitura['t'].strftime("%d-%m-%Y %H:%M"))
@@ -86,10 +86,12 @@ def index():
 	for ultima_leitura in leituras.find( {'topic':'RP02/humidity'} ).sort('t', pymongo.DESCENDING ).limit(1):
 	   humidities.append(ultima_leitura['value'])
 
-	return render_template("sensors.html",temp=temperatures,hum=humidities,str_time=strdatetime,tmin=29,tmax=30)
+	if (len(temperatures) > 0):
+		return render_template("sensors.html",temp=temperatures,hum=humidities,str_time=strdatetime,tmin=29,tmax=30,nalert=1)
+	else:
+		return abort(404)
 
 @app.route("/hist/<sensor>", methods=['GET'])
-@login_required
 def historico(sensor):
 	msg = 'Sensor: ' +sensor
 
@@ -110,50 +112,83 @@ def historico(sensor):
 	   from_date_str = yesterday.strftime("%Y-%m-%d %H:%M")
 	   to_date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-	print type(yesterday)
-	print yesterday
-	print from_date_str
-	print type(today)
-	print today
-	print to_date_str
-
 	topico = sensor.upper() + '/temperature'
+	intervalo_leituras = leituras.find( {'topic': topico, 't': {'$gte':yesterday, '$lte':today}} ).sort('t', pymongo.DESCENDING )
 	registros = []
 	i = 0
-	for registro in leituras.find( {'topic': topico, 't': {'$gte':yesterday, '$lt':today}} ).sort('t', pymongo.DESCENDING ):
-		d = datetime.utcnow()
+	for registro in intervalo_leituras:
 		d = registro['t']
 		js_formato = int(time.mktime(d.timetuple())) * 1000
-  		registros.append([js_formato,registro['t'],registro['value']])
+		if (i % 5 == 0):
+			registros.append([js_formato,registro['t'],registro['value']])
 		i += 1
-
-	#print registros
 
 	return render_template("historico.html",
 							temp 			= registros,
 							from_date 		= from_date_str,
 							to_date 		= to_date_str,
 							sensorname	  	= sensor.upper(),
-							cont = i)
+							cont = len(registros))
 
 
-@app.route("/conf/<sensor>")
+
+							
+@app.route("/roconf/<sensor>", methods=["GET"])
+def roconfiguracao(sensor):
+	msg = 'Sensor: ' +sensor
+	
+	if current_user.is_authenticated:
+		return redirect('/conf/'+sensor)
+	
+	#Conectando ao banco MongoDB
+	cliente = MongoClient('localhost', 27017)
+	banco = cliente.iotdata
+	configuracoes = banco.configuracoes
+	
+	#le as configuracoes
+	confs = configuracoes.find_one( {'sensor': sensor.upper() } )
+	return render_template("rosettings.html",parametros=confs,max=30,sensorname=sensor.upper())
+								
+@app.route("/conf/<sensor>", methods=["GET", "POST"])
 @login_required
 def configuracao(sensor):
 	msg = 'Sensor: ' +sensor
+	
+	#Conectando ao banco MongoDB
+	cliente = MongoClient('localhost', 27017)
+	banco = cliente.iotdata
+	configuracoes = banco.configuracoes
+	
+	#le as configuracoes ou instancia uma nova
+	confs = configuracoes.find_one( {'sensor': sensor.upper() } )
+	if not confs:
+		confs = { 'sensor':sensor }
 
-	paritens = ['15','30','20','50','alerta@ioterm.com.br']
 	if request.method == 'GET':
-		return render_template("settings.html",parametros=paritens,max=30,sensorname=sensor.upper())
-##	if request.method == 'POST':
-##		set_min = request.form['temp_min']
-##		curs2.execute('UPDATE parametros SET valor = %d where parametro = %s' % (int(set_min),"'LIMITE_MIN_TEMP'"))
-##		set_max = request.form['temp_max']
-##		curs2.execute('UPDATE parametros SET valor = %d where parametro = %s' % (int(set_max),"'LIMITE_MAX_TEMP'"))
-##		conn2.commit()
-##		conn2.close()
-##		return redirect('/lab_parametros')
-
+		return render_template("settings.html",parametros=confs,max=30,sensorname=sensor.upper())
+	if request.method == 'POST':
+		confs['tempmin'] = request.form['temp_min']
+		confs['tempmax'] = request.form['temp_max']
+		confs['hummin']  = request.form['umid_min']
+		confs['hummax']  = request.form['umid_max']
+		confs['email'] 	 = request.form['emailAlerta']
+		configuracoes.save(confs)
+		flash('Parametros atualizados','success')
+		return redirect('/conf/'+sensor)
+		
+@app.route("/alarmes", methods=["GET", "POST"])
+def alarmes():
+	#Conectando ao banco MongoDB
+	cliente = MongoClient('localhost', 27017)
+	banco = cliente.iotdata
+	alarmes = banco.alarmes
+	
+	#le os alarmes ativos
+	alarmes_ativos = alarmes.find( {'active': True} )
+	
+	if request.method == 'GET':
+		return render_template("alarmes.html",alarmes=alarmes_ativos)
+	
 # somewhere to login
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -164,7 +199,7 @@ def login():
 		#print user.username
 		if user and request.form['password'] == user.password:
 			login_user(user)
-			return redirect(request.args.get("next") or url_for("index"))
+			return redirect(request.args.get('next') or url_for('index'))
 		else:
 			return abort(401)
 	else:
@@ -175,9 +210,9 @@ def login():
 @login_required
 def logout():
 	logout_user()
-	return Response('<p>Logged out</p>')
-
-
+	session.clear()
+	return redirect(url_for('index'))
+	
 # handle login failed
 @app.errorhandler(401)
 def login_failed(e):
@@ -201,7 +236,7 @@ def load_user(userid):
 	flask request.
 	"""
 	return User.get(userid)
-
+	
 if __name__ == "__main__":
 
 	app.run(host='0.0.0.0')

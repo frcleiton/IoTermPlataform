@@ -74,6 +74,7 @@ def index():
 	cliente = MongoClient('localhost', 27017)
 	banco = cliente.iotdata
 	leituras = banco.leituras
+	alarmes = banco.alarmes
 
 	#Busca o valor da ultima leitura por topico/dispositivo
 	temperatures = []
@@ -90,9 +91,10 @@ def index():
 	   strdatetime.append(ultima_leitura['t'].strftime("%d-%m-%Y %H:%M"))
 	for ultima_leitura in leituras.find( {'topic':'RP02/humidity'} ).sort('t', pymongo.DESCENDING ).limit(1):
 	   humidities.append(ultima_leitura['value'])
-
+	alarmes_ativos = alarmes.find().count()
+	
 	if (len(temperatures) > 0):
-		return render_template("sensors.html",temp=temperatures,hum=humidities,str_time=strdatetime,tmin=29,tmax=30,nalert=1)
+		return render_template("sensors.html",temp=temperatures,hum=humidities,str_time=strdatetime,nalert=alarmes_ativos)
 	else:
 		return abort(404)
 
@@ -189,7 +191,7 @@ def alarmes():
 	alarmes = banco.alarmes
 	
 	#le os alarmes ativos
-	alarmes_ativos = alarmes.find( {'active': True} )
+	alarmes_ativos = alarmes.find()
 	
 	if request.method == 'GET':
 		return render_template("alarmes.html",alarmes=alarmes_ativos)
@@ -238,7 +240,7 @@ def load_user(userid):
 	None based on the userid.
 	The userid was stored in the session environment by Flask-Login.
 	user_loader stores the returned User object in current_user during every
-	flask request.
+	flask request. 
 	"""
 	return User.get(userid)
 	

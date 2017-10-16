@@ -28,10 +28,6 @@
 
         var options = {
           width: 800,
-          chart: {
-            title: 'IoTerm',
-            subtitle: 'Temperatura e umidade em tempo real'
-          },
           bars: 'horizontal', // Required for Material Bar Charts.
           series: {
             0: { axis: 'temperatura' }, // Bind series 0 to an axis named 'distance'.
@@ -52,24 +48,26 @@
   </head>
   <body>
     <div class="container">
-		<div class="u-pull-right" style="margin-top: 0%; text-align: right">
-		<a href="/home">Home</a><br>
-		{% if current_user.is_authenticated %}
-			Ola, {{current_user.id}} - <a href="/logout">Logout</a><br>
-		{% else %}
-			<a href="/login">Login</a><br>
-		{% endif %}
-		{% if nalert %}
-			<img src="/static/images/icon-push-notifications.png" Style="height: 30px; width: 30px" alt="Alertas Ativos"><a href="/alarmes">Alarme({{nalert}})</a>
-		{% endif %}
+		<div class="row">
+			<div class="one-half column" style="margin-top: 20px; text-align: left">
+				{% if current_user.is_authenticated %}
+					Ola, {{current_user.id}} - <a href="/logout">Logout</a>
+				{% else %}
+				<img src="/static/images/login.png" Style="height: 30px; width: 30px; margin-right: 3px" alt="Login"><a href="/login">Login</a>
+				{% endif %}
+			</div>
+			<div class="one-half column" style="margin-top: 10px; text-align: right">
+				<img src="/static/images/home-512.gif" Style="height: 30px; width: 30px" alt="Home"><a href="/home">Home</a>
+				{% if nalert %}
+					<img src="/static/images/icon-push-notifications.png" Style="height: 30px; width: 30px" alt="Alertas Ativos"><a href="/alarmes">Alarme({{nalert}})</a>
+				{% endif %}
+			</div>
 		</div>
-		
-      <div class="row" style="margin-top: 5%">
-		<div id="chart_temps" style="width: 100%; height: 50%;"></div>
-	  </div>
-	  <div class="row" style="margin-top: 10%">
-        
-			<table class="u-full-width">
+		<div class="row" style="margin-top: 5%">
+			<div id="chart_temps" style="width: 100%; height: 50%;"></div>
+		</div>
+	    <div class="row" style="margin-top: 5%">
+        	<table class="u-full-width">
 			  <thead>
 				<tr>
 				  <th>Sensor</th>
@@ -96,13 +94,8 @@
 				</tr>
 			  </tbody>
 			</table>	
-			
 			<p>Refresh a cada 1 minuto</p>  
       </div>
     </div>
-  <input type="hidden" id="par_temp_min" name="par_temp_min"  value={{tmin}}/>
-  <input type="hidden" id="par_temp_max" name="par_temp_max"  value={{tmax}}/>
 </body> 
-	<!-- Alerta de sensor fora dos parametros -->
-	<script type="text/javascript" src="static/javascript/alerta_sensor.js"></script>
 </html>

@@ -30,11 +30,12 @@
 		<tr>
 		  <td>{{item['descricao']}}</td>
 		  <td>{{item['sensor']}}</td>
-		  <td>{{item['data'].strftime("%d-%m-%Y %H:%M:%S")}}</td>
+		  <td>{{item['data'].strftime("%d-%m-%Y %H:%M")}}</td>
 		</tr>
         {% endfor %}
 	  </tbody>
 	</table>
+	<a href="/dashboard" style="top:15px">voltar</a>
     </div>
   </body>
 </html>

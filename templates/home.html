@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
   <!-- Basic Page Needs ––––––––––––––––––––––––––––––––––––– -->
   <meta charset="utf-8">
@@ -18,11 +18,10 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <!-- Favicon ––––––––––––––––––––––––––––––––––––––––––––– -->
   <link rel="icon" type="image/png" href="/static/images/favicon.png">
+
 </head>
 <body>
-
   <!-- Primary Page Layout ––––––––––––––––––––––––––––––––– -->
-
   <div class="section hero">
     <div class="container">
       <div class="row">
@@ -77,11 +76,22 @@
       </div>
     </div>
   </div>
+<!-- End Document ––––––––––––––––––––––––––––––––––––––––– -->
+<script type="text/javascript">
+function getThumbnail(original, scale) {
+  var canvas = document.createElement("canvas");
 
+  canvas.width = original.width * scale;
+  canvas.height = original.height * scale;
 
+  canvas.getContext("2d").drawImage(original, 0, 0, canvas.width, canvas.height);
 
+  return canvas
+}
+var image = document.getElementsByTagName("img")[0];
+var thumbnail = getThubmnail(image, 1/5);
 
-<!-- End Document
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+document.body.appendChild(thumbnail);
+</script>
 </body>
 </html>

@@ -77,21 +77,5 @@
     </div>
   </div>
 <!-- End Document ––––––––––––––––––––––––––––––––––––––––– -->
-<script type="text/javascript">
-function getThumbnail(original, scale) {
-  var canvas = document.createElement("canvas");
-
-  canvas.width = original.width * scale;
-  canvas.height = original.height * scale;
-
-  canvas.getContext("2d").drawImage(original, 0, 0, canvas.width, canvas.height);
-
-  return canvas
-}
-var image = document.getElementsByTagName("img")[0];
-var thumbnail = getThubmnail(image, 1/5);
-
-document.body.appendChild(thumbnail);
-</script>
 </body>
 </html>

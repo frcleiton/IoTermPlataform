@@ -27,3 +27,4 @@ sudo systemctl enable subscriber.service
 sudo systemctl start subscriber.service
 sudo systemctl daemon-reload
 sudo service subscriber status
+sudo pip install tzlocal

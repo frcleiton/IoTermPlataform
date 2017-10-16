@@ -30,7 +30,7 @@
 		<tr>
 		  <td>{{item['descricao']}}</td>
 		  <td>{{item['sensor']}}</td>
-		  <td>{{item['data'].strftime("%d-%m-%Y %H:%M")}}</td>
+		  <td>{{item['createdAt']|datetimefilter}}</td>
 		</tr>
         {% endfor %}
 	  </tbody>

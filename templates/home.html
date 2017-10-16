@@ -22,6 +22,15 @@
 </head>
 <body>
   <!-- Primary Page Layout ––––––––––––––––––––––––––––––––– -->
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+	{% if messages %}
+	{% for message in messages %}
+	<script>
+	alert('{{message}}');
+	</script>
+	{% endfor %}
+	{% endif %}
+	{% endwith %}
   <div class="section hero">
     <div class="container">
       <div class="row">
@@ -77,23 +86,25 @@
     </div>
   </div>
   <div class="container">  
-  <form id="contact" action="" method="post">
-    <h3>Dúvidas, críticas ou sugestões</h3>
-    <h4>Contate-nos!</h4>
-    <fieldset>
-      <input placeholder="Seu nome" type="text" tabindex="1" required>
-    </fieldset>
-    <fieldset>
-      <input placeholder="Seu endereço de e-mail" type="email" tabindex="2" required>
-    </fieldset>
-    <fieldset>
-      <textarea placeholder="Deixe sua mensagem...." tabindex="5" required></textarea>
-    </fieldset>
-    <fieldset>
-      <button name="submit" type="submit" id="contact-submit" data-submit="...Enviando">Enviar</button>
-    </fieldset>
-  </form>
-</div>
+	<div class="one-half column">
+	  <form id="contact" action="" method="post">
+		<h3>Dúvidas, críticas ou sugestões</h3>
+		<h4>Contate-nos!</h4>
+		<fieldset>
+		  <input class="u-full-width" placeholder="Seu nome" type="text" tabindex="1" name="nome" required>
+		</fieldset>
+		<fieldset>
+		  <input class="u-full-width" placeholder="Seu endereço de e-mail" type="email" tabindex="2" name ="email" required>
+		</fieldset>
+		<fieldset>
+		  <textarea class="u-full-width" placeholder="Deixe sua mensagem...." tabindex="5" name="msg" required></textarea>
+		</fieldset>
+		<fieldset>
+		  <button name="submit" type="submit" id="contact-submit" data-submit="...Enviando">Enviar</button>
+		</fieldset>
+	  </form>
+	</div>
+  </div>
 <!-- End Document ––––––––––––––––––––––––––––––––––––––––– -->
 </body>
 </html>

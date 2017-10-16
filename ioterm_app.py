@@ -6,6 +6,9 @@ from pymongo import MongoClient
 import pymongo
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from bson.objectid import ObjectId
+import pytz
+from pytz import timezone
+import tzlocal
 
 app = Flask(__name__)
 
@@ -55,6 +58,15 @@ class User(UserMixin):
 			if user[0] == userid:
 				return User(user[0], user[1])
 		return None
+		
+def datetimefilter(value, format="%d-%m-%Y %H:%M"):
+    tz = pytz.timezone('America/Sao_Paulo') # timezone you want to convert to from UTC
+    utc = pytz.timezone('UTC')  
+    value = utc.localize(value, is_dst=None).astimezone(pytz.utc)
+    local_dt = value.astimezone(tz)
+    return local_dt.strftime(format)
+
+app.jinja_env.filters['datetimefilter'] = datetimefilter
 
 def hash_pass(password):
 	"""
@@ -63,9 +75,23 @@ def hash_pass(password):
 	salted_password = password + app.secret_key
 	return md5.new(salted_password).hexdigest()
 
-@app.route("/")	
-@app.route("/home")
+@app.route("/", methods=['GET', 'POST'])	
+@app.route("/home", methods=['GET', 'POST'])
 def home():
+	if request.method == 'POST':
+		#Conectando ao banco MongoDB
+		cliente = MongoClient('localhost', 27017)
+		banco = cliente.iotdata
+		contatos = banco.contatos
+		cont = {}
+		cont['nome'] = request.form['nome']
+		cont['email'] = request.form['email']
+		cont['msg']  = request.form['msg']
+		cont['createdAt'] = datetime.now()
+		contatos.save(cont)
+		flash('Contato enviado com sucesso.','success')
+		print cont
+	#renderiza a pagina home	
 	return render_template("home.html")
 
 @app.route("/dashboard")
@@ -137,9 +163,6 @@ def historico(sensor):
 							sensorname	  	= sensor.upper(),
 							cont = len(registros))
 
-
-
-							
 @app.route("/roconf/<sensor>", methods=["GET"])
 def roconfiguracao(sensor):
 	msg = 'Sensor: ' +sensor
@@ -192,7 +215,7 @@ def alarmes():
 	
 	#le os alarmes ativos
 	alarmes_ativos = alarmes.find()
-	
+
 	if request.method == 'GET':
 		return render_template("alarmes.html",alarmes=alarmes_ativos)
 	

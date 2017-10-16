@@ -28,3 +28,4 @@ sudo systemctl start subscriber.service
 sudo systemctl daemon-reload
 sudo service subscriber status
 sudo pip install tzlocal
+pip install pytz

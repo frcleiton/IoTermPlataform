@@ -1,7 +1,6 @@
 #!/usr/bin/python
 #-*- encoding: utf-8 -*-
 
-import os
 import smtplib
 
 from datetime import datetime
@@ -24,10 +23,10 @@ contatos_ativos = contatos.find()
 
 #Define o servidor de e-mail
 server=smtplib.SMTP()
-smtpserver="smtp.grupocimed.com.br"
+smtpserver="sharedrelay-cluster.mandic.net.br"
 #smtpserver="177.70.110.120"
-server.connect(smtpserver,25)
-server.login('cleiton.ferreira@grupocimed.com.br','90op()OP#1')
+server.connect(smtpserver,587)
+server.login('ticimed@shared.mandic.net.br','cimed@2015')
 
 mail_from = 'pi@ioterm.com.br'
 mail_to = 'cleitonrferreira@gmail.com'

@@ -41,18 +41,16 @@ part1 = MIMEText(texto, 'plain')
 msg.attach(part1)
 
 for t in contatos_ativos:
-	print t
 	linha1 = 'E-mail: ' + t['email'] + '\n'
 	linha2 = 'Nome: : ' + t['nome'] + '\n'
 	linha3 = t['msg']
 	part2 = MIMEText(linha1+linha2+linha3, 'plain')
 	msg.attach(part2)
-
-try:
-	server.sendmail(mail_from, mail_to, msg.as_string())
-except Exception, e:
-    errorMsg = "Error: %s" % str(e)
-    print errorMsg
+	try:
+		server.sendmail(mail_from, mail_to, msg.as_string())
+	except Exception, e:
+    		errorMsg = "Error: %s" % str(e)
+    	print errorMsg
 
 #libera recursos
 server.close;

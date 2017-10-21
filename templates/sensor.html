@@ -1,0 +1,100 @@
+<html lang="pt-br">
+  <meta charset="utf-8">
+  <title>IoTerm</title>
+  <meta http-equiv="refresh" content="120">
+  <meta name="description" content="Termohigrometro - IoT">
+  <meta name="author" content="Cleiton Ferreira">
+  <!-- Mobile Specific Metas ––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- FONT ––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <!-- CSS –––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/static/css/normalize.css">
+  <link rel="stylesheet" href="/static/css/skeleton.css">
+  <!-- Favicon ––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/static/images/favicon.png">
+  </head>
+  <body>
+	<input type="hidden" id="altemp" value="a">
+	<input type="hidden" id="alhumi" value="b">
+	<div class="container">
+		<div class="row">
+			<div class="one-half column" style="margin-top: 20px; text-align: left">
+				{% if current_user.is_authenticated %}
+					Ola, {{current_user.id}} - <a href="/logout">Logout</a>
+				{% else %}
+				<img src="/static/images/login.png" Style="height: 30px; width: 30px; margin-right: 3px" alt="Login"><a href="/login">Login</a>
+				{% endif %}
+			</div>
+			<div class="one-half column" style="margin-top: 10px; text-align: right">
+				<img src="/static/images/home-512.gif" Style="height: 30px; width: 30px" alt="Home"><a href="/home">Home</a>
+				{% if alertas %}
+					<img src="/static/images/icon-push-notifications.png" Style="height: 30px; width: 30px"><a href="/alarmes">Alarme({{alertas|count}})</a>
+				{% endif %}
+			</div>
+		</div>
+		<div class="row" Style="margin-top: 100px">
+			<div class="three columns" id="rp01temp" Style="padding: 5px; border-width: 1px; border-style: solid">
+				<p class="section-description">{{temp[0][0]}}</p>
+				<h1 id="temperatura" class="section-heading">{{"{0:0.1f}".format(temp[0][1])}} C°</h1>
+				<p class="section-description">{{temp[0][2]}}</p>
+			</div>
+			<div class="three columns" id="rp01humi" Style="padding: 5px; border-width: 1px; border-style: solid">
+				<p class="section-description">{{humi[0][0]}}</p>
+				<h1 id="humidity" class="section-heading">{{"{0:0.0f}".format(humi[0][1])}} %</h1>
+				<p class="section-description">{{humi[0][2]}}</p>
+			</div>
+			<div class="three columns">
+				
+			</div>
+			<div class="three columns">
+				
+			</div>
+		</div>
+	    <div class="row" style="margin-top: 5%">
+        	<table class="u-full-width">
+			  <thead>
+				<tr>
+				  <th>Sensor</th>
+				  <th>Mínima</th>
+				  <th>Máxima</th>
+				  <th>Média</th>
+				  <th><span>Settings</span></th>
+				</tr>
+			  </thead>
+			  <tbody>
+				<tr id='RP01'>
+				  <td><a href="/hist/rp01">{{medi[0]}}</a></td>
+				  <td>{{medi[1]}} C°</td>
+				  <td>{{medi[2]}} C°</td>
+ 				  <td>{{medi[3]}} C°</td>
+				  <td><a href="/roconf/rp01"><img src=static/images/settings.png width="20px" height="20px"></a></td>
+				</tr>
+				<tr id='RP01'>
+				  <td><a href="/hist/rp01">{{medih[0]}}</a></td>
+				  <td>{{medih[1]}}%</td>
+				  <td>{{medih[2]}}%</td>
+ 				  <td>{{medih[3]}}%</td>
+				  <td><a href="/roconf/rp01"><img src=static/images/settings.png width="20px" height="20px"></a></td>
+				</tr>
+			  </tbody>
+			</table>	
+			<p>Dados das ultimas 24hrs - Refresh a cada 1 minuto</p>  
+      </div>
+    </div>
+</body>
+<!-- JS      ––––––––––––––––––––––––––––––––––––––––––––– -->
+<script>
+	{% for a in alertas %}
+		{% if a[1] == "RP01/temperature" %}
+			console.log("{{a[1]}}")
+			document.getElementById("rp01temp").style.color = "white";
+			document.getElementById("rp01temp").style.backgroundColor = "red";
+		{% endif %}
+		{% if a[1] == "RP01/humidity" %}
+			document.getElementById("rp01humi").style.color = "white";
+			document.getElementById("rp01humi").style.backgroundColor = "red";
+		{% endif %}
+	{% endfor %}
+</script>
+</html>

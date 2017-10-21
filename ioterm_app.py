@@ -70,7 +70,7 @@ app.jinja_env.filters['datetimefilter'] = datetimefilter
 
 def hash_pass(password):
 	"""
-	Return the md5 hash of the password+salt
+	Return these	se md5 hash of the password+salt
 	"""
 	salted_password = password + app.secret_key
 	return md5.new(salted_password).hexdigest()
@@ -101,28 +101,46 @@ def index():
 	banco = cliente.iotdata
 	leituras = banco.leituras
 	alarmes = banco.alarmes
-
+	topico_temp = 'RP01/temperature'
+	topico_humi = 'RP01/humidity'
+	
 	#Busca o valor da ultima leitura por topico/dispositivo
 	temperatures = []
 	humidities = []
-	strdatetime = []
-	str_time = []
-	for ultima_leitura in leituras.find( {'topic':'RP01/temperature'} ).sort('t', pymongo.DESCENDING ).limit(1):
-	   temperatures.append(ultima_leitura['value'])
-	   strdatetime.append(ultima_leitura['t'].strftime("%d-%m-%Y %H:%M"))
-	for ultima_leitura in leituras.find( {'topic':'RP01/humidity'} ).sort('t', pymongo.DESCENDING ).limit(1):
-	   humidities.append(ultima_leitura['value'])
-	for ultima_leitura in leituras.find( {'topic':'RP02/temperature'} ).sort('t', pymongo.DESCENDING ).limit(1):
-	   temperatures.append(ultima_leitura['value'])
-	   strdatetime.append(ultima_leitura['t'].strftime("%d-%m-%Y %H:%M"))
-	for ultima_leitura in leituras.find( {'topic':'RP02/humidity'} ).sort('t', pymongo.DESCENDING ).limit(1):
-	   humidities.append(ultima_leitura['value'])
-	alarmes_ativos = alarmes.find().count()
+	medias_temp = []
+	medias_humi = []
+	alertas = []
+	leitura = leituras.find( {'topic': topico_temp} ).sort('t', pymongo.DESCENDING ).limit(1)
+	temperatures.append( [topico_temp, leitura[0]['value'], leitura[0]['t'].strftime("%d.%m.%Y %H:%M")] )
+	leitura = leituras.find( {'topic': topico_humi} ).sort('t', pymongo.DESCENDING ).limit(1)
+	humidities.append( [topico_humi, leitura[0]['value'], leitura[0]['t'].strftime("%d.%m.%Y %H:%M")] )
+	#alertas
+	lalarmes = []
+	for a in alarmes.find():
+		lalarmes.append([a['descricao'],a['sensor'],a['createdAt']])
+		
+	#media das ultimas 24 horas
+	yesterday = datetime.now() - timedelta(days=1)
+	pipeline = [
+		{"$unwind": "$topic"},
+		{"$match": {"t": { "$gt": yesterday}}},
+		{"$group": {"_id": "$topic", "max": {"$max": "$value"}, "min": {"$min": "$value"}, "med": {"$avg": "$value"}}}
+	]
+	cursor = leituras.aggregate(pipeline)
+	for item in cursor:
+		if item['_id'] == topico_temp:
+			medias_temp.append(topico_temp)  
+			medias_temp.append(item['min'])
+			medias_temp.append(item['max'])
+			medias_temp.append(round(item['med'], 2))
+		if item['_id'] == topico_humi:
+			medias_humi.append(topico_humi)  
+			medias_humi.append(int(round(item['min'])))
+			medias_humi.append(int(round(item['max'])))
+			medias_humi.append(int(round(item['med'])))
+			
+	return render_template("sensor.html",temp=temperatures,humi=humidities,medi=medias_temp,medih=medias_humi,alertas=lalarmes)
 	
-	if (len(temperatures) > 0):
-		return render_template("sensors.html",temp=temperatures,hum=humidities,str_time=strdatetime,nalert=alarmes_ativos)
-	else:
-		return abort(404)
 
 @app.route("/hist/<sensor>", methods=['GET'])
 def historico(sensor):
@@ -214,11 +232,21 @@ def alarmes():
 	alarmes = banco.alarmes
 	
 	#le os alarmes ativos
-	alarmes_ativos = alarmes.find()
+	alarmes_ativos = alarmes.find().sort('createdAt', pymongo.DESCENDING )
 
 	if request.method == 'GET':
 		return render_template("alarmes.html",alarmes=alarmes_ativos)
-	
+		
+@app.route("/limparalarmes")
+@login_required
+def limparalarmes():
+	#Conectando ao banco MongoDB
+	cliente = MongoClient('localhost', 27017)
+	banco = cliente.iotdata
+	alarmes = banco.alarmes
+	alarmes.remove( {} )
+	return redirect('/dashboard')		
+			
 # somewhere to login
 @app.route("/login", methods=["GET", "POST"])
 def login():

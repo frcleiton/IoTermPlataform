@@ -22,6 +22,9 @@
 		<tr>
 		  <th>Descrição</th>
 		  <th>sensor</th>
+		  <th>Mínima</th>
+		  <th>Máxima</th>
+		  <th>Leitura</th>
 		  <th>data/hora</th>
 		</tr>
 	  </thead>
@@ -30,12 +33,16 @@
 		<tr>
 		  <td>{{item['descricao']}}</td>
 		  <td>{{item['sensor']}}</td>
+		  <td>{{item['minima']}}</td>
+		  <td>{{item['maxima']}}</td>
+		  <td>{{item['leitura']}}</td>
 		  <td>{{item['createdAt']|datetimefilter}}</td>
 		</tr>
         {% endfor %}
 	  </tbody>
 	</table>
 	<a href="/dashboard" style="top:15px">voltar</a>
+	<a href="/limparalarmes" style="top:15px">limpar</a>
     </div>
   </body>
 </html>

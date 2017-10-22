@@ -1,7 +1,7 @@
 <html lang="pt-br">
   <meta charset="utf-8">
   <title>IoTerm</title>
-  <meta http-equiv="refresh" content="120">
+  <meta http-equiv="refresh" content="60">
   <meta name="description" content="Termohigrometro - IoT">
   <meta name="author" content="Cleiton Ferreira">
   <!-- Mobile Specific Metas ––––––––––––––––––––––––––––––––––––– -->
@@ -65,9 +65,9 @@
 			  <tbody>
 				<tr id='RP01'>
 				  <td><a href="/hist/rp01">{{medi[0]}}</a></td>
-				  <td>{{medi[1]}} C°</td>
-				  <td>{{medi[2]}} C°</td>
- 				  <td>{{medi[3]}} C°</td>
+				  <td>{{"{0:0.1f}".format(medi[1])}} C°</td>
+				  <td>{{"{0:0.1f}".format(medi[2])}} C°</td>
+ 				  <td>{{"{0:0.1f}".format(medi[3])}} C°</td>
 				  <td><a href="/roconf/rp01"><img src=static/images/settings.png width="20px" height="20px"></a></td>
 				</tr>
 				<tr id='RP01'>

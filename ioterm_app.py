@@ -88,6 +88,7 @@ def home():
 		cont['email'] = request.form['email']
 		cont['msg']  = request.form['msg']
 		cont['createdAt'] = datetime.now()
+		cont['enviado'] = False
 		contatos.save(cont)
 		flash('Contato enviado com sucesso.','success')
 		print cont
@@ -224,7 +225,7 @@ def configuracao(sensor):
 		flash('Parametros atualizados','success')
 		return redirect('/conf/'+sensor)
 		
-@app.route("/alarmes", methods=["GET", "POST"])
+@app.route("/alarmes")
 def alarmes():
 	#Conectando ao banco MongoDB
 	cliente = MongoClient('localhost', 27017)
@@ -237,6 +238,15 @@ def alarmes():
 	if request.method == 'GET':
 		return render_template("alarmes.html",alarmes=alarmes_ativos)
 		
+@app.route("/historico_alarmes")
+def historico_alarmes():
+	#Conectando ao banco MongoDB
+	cliente = MongoClient('localhost', 27017)
+	banco = cliente.iotdata
+	histo = banco.historico
+	halarmes = histo.find().sort('createdAt', pymongo.DESCENDING )
+	return render_template("halarmes.html",alarmes=halarmes)
+		
 @app.route("/limparalarmes")
 @login_required
 def limparalarmes():
@@ -246,6 +256,16 @@ def limparalarmes():
 	alarmes = banco.alarmes
 	alarmes.remove( {} )
 	return redirect('/dashboard')		
+	
+@app.route("/limparhalarmes")
+@login_required
+def limparhalarmes():
+	#Conectando ao banco MongoDB
+	cliente = MongoClient('localhost', 27017)
+	banco = cliente.iotdata
+	histo = banco.historico
+	histo.remove( {} )
+	return redirect('/dashboard')
 			
 # somewhere to login
 @app.route("/login", methods=["GET", "POST"])

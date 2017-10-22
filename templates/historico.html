@@ -24,6 +24,8 @@
           </div>
           <div class="one-half column" style="text-align: right">
             <span><a href="/dashboard">tempo real</a></span>
+			<span><a href="/alarmes">alarmes ativos</a></span>
+			<span><a href="/historico_alarmes">historico alarmes</a></span>
           </div>
       </div>
       <div class="row">
@@ -62,7 +64,7 @@
                 {% for row in temp %}
                 <tr>
                   <td>{{row[1]}}</td>
-                  <td>{{'%0.2f'|format(row[2])}}</td>
+         		  <td>{{"{0:0.1f}".format(row[2])}}</td>
                 </tr>
                 {% endfor %}
               </tbody>

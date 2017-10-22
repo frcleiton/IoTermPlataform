@@ -23,7 +23,11 @@ def grava_alarme(_alarme):
 	cliente = MongoClient('localhost', 27017)
 	banco = cliente.iotdata
 	alarmes = banco.alarmes
+	historico = banco.historico
+	print 'gravando alarme e historico:'
+	print _alarme
 	alarmes.save(_alarme)
+	historico.save(_alarme)
 	
 def store_on_mongo(_msg):
 	#print(_msg.topic + " " + str(_msg.qos) + " " + str(_msg.payload))
@@ -37,9 +41,6 @@ def store_on_mongo(_msg):
 	str_mqtt_datetime = data[u't'] 
 	datetime_object = datetime.strptime(str_mqtt_datetime, '%d-%m-%Y %H:%M:%S')
 	data[u't'] = datetime_object
-
-	print 'Store in mongodb: ' + str(data)
-	leituras.insert_one(data).inserted_id
 
 	#verifica parametros e dispara alarmes
 	configuracoes = banco.configuracoes
@@ -70,6 +71,9 @@ def store_on_mongo(_msg):
 			evt_alarme['maxima']  = confs['hummax']
 			evt_alarme['leitura'] = data['value']
 			grava_alarme(evt_alarme)
+			
+	print 'Store in mongodb: ' + str(data)
+	print leituras.insert_one(data).inserted_id
 		
 mqttc = mqtt.Client()
 # Assign event callbacks

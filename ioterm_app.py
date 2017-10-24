@@ -128,6 +128,14 @@ def index():
 		{"$group": {"_id": "$topic", "max": {"$max": "$value"}, "min": {"$min": "$value"}, "med": {"$avg": "$value"}}}
 	]
 	cursor = leituras.aggregate(pipeline)
+	medias_temp.append(topico_temp)  
+	medias_temp.append(0.0)
+	medias_temp.append(0.0)
+	medias_temp.append(0.0)
+	medias_humi.append(topico_humi)
+	medias_humi.append(0.0)
+	medias_humi.append(0.0)
+	medias_humi.append(0.0)
 	for item in cursor:
 		if item['_id'] == topico_temp:
 			medias_temp.append(topico_temp)  

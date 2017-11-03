@@ -128,25 +128,29 @@ def index():
 		{"$group": {"_id": "$topic", "max": {"$max": "$value"}, "min": {"$min": "$value"}, "med": {"$avg": "$value"}}}
 	]
 	cursor = leituras.aggregate(pipeline)
-	medias_temp.append(topico_temp)  
-	medias_temp.append(0.0)
-	medias_temp.append(0.0)
-	medias_temp.append(0.0)
-	medias_humi.append(topico_humi)
-	medias_humi.append(0.0)
-	medias_humi.append(0.0)
-	medias_humi.append(0.0)
-	for item in cursor:
-		if item['_id'] == topico_temp:
-			medias_temp.append(topico_temp)  
-			medias_temp.append(item['min'])
-			medias_temp.append(item['max'])
-			medias_temp.append(round(item['med'], 2))
-		if item['_id'] == topico_humi:
-			medias_humi.append(topico_humi)  
-			medias_humi.append(int(round(item['min'])))
-			medias_humi.append(int(round(item['max'])))
-			medias_humi.append(int(round(item['med'])))
+	listcursor = list(leituras.aggregate(pipeline))
+	
+	if len(listcursor) > 0:
+		for item in cursor:
+			if item['_id'] == topico_temp:
+				medias_temp.append(topico_temp)  
+				medias_temp.append(item['min'])
+				medias_temp.append(item['max'])
+				medias_temp.append(round(item['med'], 2))
+			if item['_id'] == topico_humi:
+				medias_humi.append(topico_humi)  
+				medias_humi.append(int(round(item['min'])))
+				medias_humi.append(int(round(item['max'])))
+				medias_humi.append(int(round(item['med'])))
+	else:
+		medias_temp.append(topico_temp)  
+		medias_temp.append(0.0)
+		medias_temp.append(0.0)
+		medias_temp.append(0.0)
+		medias_humi.append(topico_humi)
+		medias_humi.append(0.0)
+		medias_humi.append(0.0)
+		medias_humi.append(0.0)
 			
 	return render_template("sensor.html",temp=temperatures,humi=humidities,medi=medias_temp,medih=medias_humi,alertas=lalarmes)
 	

@@ -21,23 +21,34 @@ from pymongo import MongoClient
 import pymongo
 from bson.json_util import dumps
 
-def enviar_email(_mensagem):
+def enviar_email(alarm):
+	config = ConfigParser.ConfigParser()
+	config.read('email.cfg')
+	SMTP_SERVER	    = config.get('config','smtpserver')
+	SMTP_USER       = config.get('config','smtpuser')
+	SMTP_PASS       = config.get('config','smtppass')
+	_MAIL_FROM		= config.get('config','mailfrom')
+	
 	#Define o servidor de e-mail
 	server=smtplib.SMTP()
-	smtpserver="sharedrelay-cluster.mandic.net.br"
-	#smtpserver="177.70.110.120"
+	smtpserver=SMTP_SERVER
 	server.connect(smtpserver,587)
-	server.login('ticimed@shared.mandic.net.br','cimed@2015')
-	mail_from = 'pi@ioterm.com.br'
-	mail_to = 'cleitonrferreira@gmail.com'
+	server.login(SMTP_USER, SMTP_PASS)
+	mail_from = _MAIL_FROM
+	mail_to = alarm['mail']
 
 	msg = MIMEMultipart()
 	msg["From"] = mail_from
 	msg["To"] = mail_to
 	msg['Date']  = formatdate(localtime=True)
-	msg["Subject"] = "Alertas"
-	texto = 'Email de IoTerm\n'
-	part1 = MIMEText(texto + _mensagem, 'plain')
+	msg["Subject"] = "Alarme sensor " + alarm['sensor']
+	texto = alarm['descricao'] + '\n'
+	texto += 'sensor ' + alarm['sensor']
+	texto += 'Data de criacao ' + alarm['createdAt']
+	texto += 'Parametro minimo' + alarm['minima']
+	texto += 'Parametro maximo' + alarm['maxima']
+	texto += 'Valor lido'       + alarm['leitura']
+	part1 = MIMEText(texto, 'plain')
 	msg.attach(part1)
 	try:
 		server.sendmail(mail_from, mail_to, msg.as_string())
@@ -46,6 +57,7 @@ def enviar_email(_mensagem):
 	except Exception, e:
 		errorMsg = "Error: %s" % str(e)
 		print errorMsg
+	server.close()
 
 def main():
 	#Conectando ao banco MongoDB
@@ -55,11 +67,14 @@ def main():
 	collection_contatos = banco.contatos
 	alarmes = collection_alarmes.find()
 	contatos = collection_contatos.find( {'enviado': False} )
-	if alarmes.count():
-		enviar_email(dumps(alarmes, indent=4, sort_keys=True))
-	if contatos.count():
-		enviar_email(dumps(contatos, indent=4, sort_keys=True))
-		collection_contatos.update_many({ 'enviado': False },{ '$set': { 'enviado' : True }} )
+	for alarm in alarmes:
+		enviar_email(alarm)
+	#if alarmes.count():
+	#	enviar_email(dumps(alarmes, indent=4, sort_keys=True))
+	#if contatos.count():
+	#	enviar_email(dumps(contatos, indent=4, sort_keys=True))
+	#	collection_contatos.update_many({ 'enviado': False },{ '$set': { 'enviado' : True }} )
+	
 
 if __name__ == '__main__':
     main()

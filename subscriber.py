@@ -51,6 +51,7 @@ def store_on_mongo(_msg):
 		ctempmin = int(confs['tempmin'])
 		dvalue   = int(data['value'])
 		ctempmax = int(confs['tempmax'])
+		mail     = confs['email']
 		if not ctempmin <= dvalue <= ctempmax:
 			evt_alarme['descricao'] = 'Alerta de temperatura'
 			evt_alarme['sensor']    = _msg.topic

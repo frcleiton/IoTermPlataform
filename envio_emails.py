@@ -20,11 +20,12 @@ from email.mime.text import MIMEText
 from pymongo import MongoClient
 import pymongo
 from bson.json_util import dumps
+import ConfigParser
 
 def enviar_email(alarm):
 	config = ConfigParser.ConfigParser()
 	config.read('email.cfg')
-	SMTP_SERVER	    = config.get('config','smtpserver')
+	SMTP_SERVER     = config.get('config','smtpserver')
 	SMTP_USER       = config.get('config','smtpuser')
 	SMTP_PASS       = config.get('config','smtppass')
 	_MAIL_FROM		= config.get('config','mailfrom')
@@ -42,12 +43,12 @@ def enviar_email(alarm):
 	msg["To"] = mail_to
 	msg['Date']  = formatdate(localtime=True)
 	msg["Subject"] = "Alarme sensor " + alarm['sensor']
-	texto = alarm['descricao'] + '\n'
-	texto += 'sensor ' + alarm['sensor']
-	texto += 'Data de criacao ' + alarm['createdAt']
-	texto += 'Parametro minimo' + alarm['minima']
-	texto += 'Parametro maximo' + alarm['maxima']
-	texto += 'Valor lido'       + alarm['leitura']
+	texto = alarm['descricao'] + '\n\n'
+	texto += 'Nome do sensor:   ' + alarm['sensor'] + '\n'
+	texto += 'Data de criacao:  ' + alarm['createdAt'].strftime("%Y-%m-%d %H:%M") + '\n'
+	texto += 'Parametro minimo: ' + alarm['minima'] + '\n'
+	texto += 'Parametro maximo: ' + alarm['maxima'] + '\n'
+	texto += 'Valor lido:       ' + str(alarm['leitura']) + '\n'
 	part1 = MIMEText(texto, 'plain')
 	msg.attach(part1)
 	try:
@@ -69,12 +70,7 @@ def main():
 	contatos = collection_contatos.find( {'enviado': False} )
 	for alarm in alarmes:
 		enviar_email(alarm)
-	#if alarmes.count():
-	#	enviar_email(dumps(alarmes, indent=4, sort_keys=True))
-	#if contatos.count():
-	#	enviar_email(dumps(contatos, indent=4, sort_keys=True))
-	#	collection_contatos.update_many({ 'enviado': False },{ '$set': { 'enviado' : True }} )
-	
+		
 
 if __name__ == '__main__':
     main()

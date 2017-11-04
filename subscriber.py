@@ -51,14 +51,14 @@ def store_on_mongo(_msg):
 		ctempmin = int(confs['tempmin'])
 		dvalue   = int(data['value'])
 		ctempmax = int(confs['tempmax'])
-		mail     = confs['email']
 		if not ctempmin <= dvalue <= ctempmax:
 			evt_alarme['descricao'] = 'Alerta de temperatura'
 			evt_alarme['sensor']    = _msg.topic
 			evt_alarme['createdAt'] = datetime.now()
-			evt_alarme['minima'] = confs['tempmin']
-			evt_alarme['maxima'] = confs['tempmax']
-			evt_alarme['leitura'] = data['value']
+			evt_alarme['minima']    = confs['tempmin']
+			evt_alarme['maxima']    = confs['tempmax']
+			evt_alarme['leitura']   = data['value']
+			evt_alarme['mail']      = confs['email']
 			grava_alarme(evt_alarme)
 	if (_msg.topic.split('/')[1][:3]=='hum'):
 		chummin = int(confs['hummin'])
@@ -68,9 +68,10 @@ def store_on_mongo(_msg):
 			evt_alarme['descricao'] = 'Alerta de umidade'
 			evt_alarme['sensor']    = _msg.topic
 			evt_alarme['createdAt'] = datetime.now()
-			evt_alarme['minima']  = confs['hummin']
-			evt_alarme['maxima']  = confs['hummax']
-			evt_alarme['leitura'] = data['value']
+			evt_alarme['minima']    = confs['hummin']
+			evt_alarme['maxima']    = confs['hummax']
+			evt_alarme['leitura']   = data['value']
+			evt_alarme['mail']      = confs['email']
 			grava_alarme(evt_alarme)
 			
 	print 'Store in mongodb: ' + str(data)

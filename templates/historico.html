@@ -13,14 +13,14 @@
     <!-- CSS –––––––––––––––––––––––––––––––––––– -->
     <link rel="stylesheet" href="/static/css/normalize.css">
     <link rel="stylesheet" href="/static/css/skeleton.css">
-    <!-- Favicon ––––––––––––––––––––––––––––––––– -->
-    <!--<link rel="icon" type="image/png" href="/static/images/favcimed.png">-->
+    <!-- Favicon ––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
   </head>
   <body>
     <div class="container" style="margin-top: 2%">
       <div class="row">
           <div class="one-half column">
-            <h2>{{sensorname}} - Temperatura</h2>
+            <h2>{{sensorname}} - Temperatura e umidade</h2>
           </div>
           <div class="one-half column" style="text-align: right">
             <span><a href="/dashboard">tempo real</a></span>
@@ -72,13 +72,53 @@
         </div>
  
         <div class="two-thirds column" style="margin-top: 5%">
-        <div class="row">                  
-          <div class="row">
-            <div class="three columns">
-                <div id="chart_temps"></div>
+          <div class="row">                  
+            <div class="row">
+              <div class="three columns">
+                  <div id="chart_temps"></div>
+              </div>
+            </div>
+          </div>     
+        </div>
+      </div>
+      <div class="row">
+        <div class="one-third column" style="margin-top: 2%">
+          <strong>Mostrar todos os registros - ({{cont}})</strong>
+  
+            <table class="u-full-width" style="height:450px; overflow:scroll; display:block;">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>&deg;UR</th>
+                </tr>
+              </thead>
+              <tbody >
+                {% for rowh in humi %}
+                <tr>
+                  <td>{{rowh[1]}}</td>
+         		  <td>{{"{0:0.1f}".format(rowh[2])}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
+ 
+        <div class="two-thirds column" style="margin-top: 5%">
+          <div class="row">                  
+            <div class="row">
+              <div class="three columns">
+                  <div id="chart_temps"></div>
+              </div>
             </div>
           </div>
-        </div>     
+          <div class="row">                  
+            <div class="row">
+              <div class="three columns">
+                  <div id="chart_humids"></div>
+              </div>
+            </div>
+          </div>     
+        </div>
       </div>
     </div>
   <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
@@ -127,11 +167,47 @@
       };
 
       var chart = new google.charts.Line(document.getElementById('chart_temps'));
+      var charth = new google.charts.Line(document.getElementById('chart_humids'));
 
       {% if cont %}
         chart.draw(data, google.charts.Line.convertOptions(options));
       {% endif %}
       }
     
+  </script>
+  <script type="text/javascript">
+
+      google.charts.load('current', {'packages':['line']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+      var data = new google.visualization.DataTable();
+      data.addColumn('datetime', 'Day');
+      data.addColumn('number', '{{sensorname}}');
+      
+      data.addRows([
+      {% for row in humi %}
+
+        [new Date({{row[0]}}),{{'%0.2f'|format(row[2])}}],
+        
+      {% endfor %}
+      ]);
+
+      var options = {
+        chart: {
+          title: '{{sensorname}} - Historico de umidades',
+          subtitle: 'em UR'
+        },
+        width: 800,
+        height: 450
+      };
+
+      var charth = new google.charts.Line(document.getElementById('chart_humids'));
+
+      {% if cont %}
+        charth.draw(data, google.charts.Line.convertOptions(options));
+      {% endif %}
+      }    
   </script>
 </html>

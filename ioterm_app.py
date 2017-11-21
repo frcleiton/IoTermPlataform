@@ -180,15 +180,29 @@ def historico(sensor):
 	intervalo_leituras = leituras.find( {'topic': topico, 't': {'$gte':yesterday, '$lte':today}} ).sort('t', pymongo.DESCENDING )
 	registros = []
 	i = 0
+	
 	for registro in intervalo_leituras:
 		d = registro['t']
 		js_formato = int(time.mktime(d.timetuple())) * 1000
 		if (i % 5 == 0):
 			registros.append([js_formato,registro['t'],registro['value']])
 		i += 1
+		
+	topicoh = sensor.upper() + '/humidity'
+	intervalo_leiturash = leituras.find( {'topic': topicoh, 't': {'$gte':yesterday, '$lte':today}} ).sort('t', pymongo.DESCENDING )
+	registrosh = []
+	ih = 0	
+	
+	for registroh in intervalo_leiturash:
+		dh = registroh['t']
+		js_formatoh = int(time.mktime(dh.timetuple())) * 1000
+		if (ih % 5 == 0):
+			registrosh.append([js_formatoh,registroh['t'],registroh['value']])
+		ih += 1
 
 	return render_template("historico.html",
 							temp 			= registros,
+							humi 			= registrosh,
 							from_date 		= from_date_str,
 							to_date 		= to_date_str,
 							sensorname	  	= sensor.upper(),

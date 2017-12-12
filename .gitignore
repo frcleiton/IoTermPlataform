@@ -4,3 +4,4 @@ dump/*
 oldlogins/*
 *.sock
 .vscode/
+*.cfg

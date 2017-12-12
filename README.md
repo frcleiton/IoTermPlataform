@@ -1,6 +1,6 @@
 # IoTerm
 
-IoTermPlataform - Plataforma IoT
+Módulo - IoTermPlataform - Plataforma IoT
 
 ## Technology
 - [Ubuntu Server 16.04.3 LTS]
